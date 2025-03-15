@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'chave_fallback_super_insegura')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.39', "10.0.0.236",'10.0.0.227']
+ALLOWED_HOSTS = ['127.0.0.1','3.86.215.118']
 
 
 # Application definition
