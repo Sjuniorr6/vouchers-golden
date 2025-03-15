@@ -53,12 +53,8 @@ INSTALLED_APPS = [
    
 ]
 DEBUG = True
-STATIC_URL = '/static/'
 
-# Se a pasta 'static' está no mesmo nível de manage.py:
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Ajuste se necessário
-]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -149,8 +145,6 @@ TIME_ZONE = 'America/Sao_Paulo'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 import os
 from pathlib import Path
@@ -160,7 +154,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
