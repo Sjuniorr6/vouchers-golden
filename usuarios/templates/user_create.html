@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Criar Usuário{% endblock %}
+
+{% block content %}
+
+<style>
+.container {
+    max-width: 600px;
+    width: 90%;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Título do formulário */
+.titulo {
+    font-size: 26px;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+/* Linha decorativa abaixo do título */
+.titulo::after {
+    content: "";
+    width: 80px;
+    height: 3px;
+    background: #277dff;
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* Formulário */
+form {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Campos do formulário */
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+/* Estilização do label */
+label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: block;
+    font-size: 16px;
+    color: #555;
+}
+
+/* Campos de entrada */
+.form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #f8f9fa;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Efeito ao focar no campo */
+.form-control:focus {
+    border-color: #277dff;
+    box-shadow: 0px 0px 8px rgba(39, 125, 255, 0.4);
+    outline: none;
+}
+
+/* Efeito hover nos campos */
+.form-control:hover {
+    border-color: #277dff;
+}
+
+/* Botões */
+.btn-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Botão de salvar */
+.btn-success {
+    width: 48%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #28a745, #218838);
+    color: white;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Efeito hover */
+.btn-success:hover {
+    background: linear-gradient(45deg, #218838, #1e7e34);
+    transform: scale(1.05);
+}
+
+/* Botão de voltar */
+.btn-secondary {
+    width: 48%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: transparent;
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Efeito hover no botão de voltar */
+.btn-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Ajuste do campo de seleção de múltiplas opções */
+select[multiple] {
+    width: 100%;  /* Ocupa toda a largura do formulário */
+    max-width: 400px; /* Define um tamanho máximo */
+    height: 120px; /* Ajuste a altura conforme necessário */
+    padding: 8px;
+    font-size: 16px;
+    background-color: #f8f9fa;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: inset 0px 1px 4px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Ajuste para dropdowns normais */
+select {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+/* Efeito ao focar */
+select:focus {
+    border-color: #277dff;
+    box-shadow: 0px 0px 8px rgba(39, 125, 255, 0.4);
+    outline: none;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 480px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .titulo {
+        font-size: 22px;
+    }
+
+    .btn-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-success, .btn-secondary {
+        width: 100%;
+    }
+}
+</style>  
+
+{% include "components/_navbar.html" %}
+<div class="container">
+  <h2 class="titulo">Criar PA</h2>
+  <form method="POST">  
+    {% csrf_token %} 
+    {{ form.as_p }}  
+
+    <div class="btn-container">
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a href="{% url 'user_list' %}" class="btn btn-secondary">Voltar</a>
+    </div>
+  </form>  
+
+</div>
+{% endblock %}

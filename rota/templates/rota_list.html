@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Lista de Rotas{% endblock %}
+
+{% block content %}
+
+<style>
+body {
+    padding-top: 0px; /* Se necessário, reduza esse valor */
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 5px auto 30px; /* Mantém apenas um pequeno espaço */
+    padding: 20px;
+}
+
+/* Estilização do título */
+.titulo-rotas {
+    font-size: 30px;
+    color: #222;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+    margin-top: 50px;
+}
+
+/* Linha decorativa abaixo do título */
+.titulo-rotas::after {
+    content: "";
+    width: 80px;
+    height: 4px;
+    background: #FFD700;
+    display: block;
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+
+/* Estilização da tabela */
+.table-container {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.table thead {
+    background: #007bff;
+    color: white;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.table tbody tr:hover {
+    background: #f1f1f1;
+    transition: 0.3s;
+}
+
+/* Botão aprimorado */
+.btn-primary {
+    display: block;
+    width: max-content;
+    margin: 20px auto;
+    border-radius: 25px;
+    padding: 12px 25px;
+    font-weight: bold;
+    font-size: 16px;
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+}
+
+/* Efeito hover no botão */
+.btn-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #003d7a);
+    transform: scale(1.05);
+}
+</style>
+
+{% include "components/_navbar.html" %}
+<div class="container">
+  <h2 class="titulo-rotas">Rotas Cadastradas</h2>
+  
+  <a href="{% url 'rota_create' %}" class="btn btn-primary mt-3">Nova Rota</a>
+
+  {% if rotas %}
+  <div class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nome da Rota</th>
+          <th>Postos Vinculados</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rota in rotas %}
+        <tr>
+          <td>{{ rota.nome }}</td>
+          <td>
+            {% for posto in rota.postos.all %}
+              {{ posto.nome }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p>Nenhuma rota cadastrada.</p>
+  {% endif %}
+</div>
+{% endblock %}

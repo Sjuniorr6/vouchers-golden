@@ -1,0 +1,220 @@
+{% load static %}
+
+<style>
+  /* Ajuste para a navbar fixa */
+  body {
+      margin: 0;
+      padding: 0;
+      padding-top: 80px; /* Espaçamento igual à altura da navbar */
+  }
+
+  /* Navbar fixa com fundo sólido */
+  .navbar {
+      background-color: #d4a017 !important; /* Amarelo dourado */
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+  }
+
+  /* Ajuste do espaçamento do menu na versão desktop */
+  @media (min-width: 992px) {
+      .navbar-nav {
+          padding-right: 20px; /* Espaçamento no menu */
+      }
+
+      /* Último item da navbar (Sair) afastado da borda */
+      .navbar-nav .nav-item:last-child {
+          margin-right: 30px;
+      }
+  }
+
+  /* Cor do texto do menu */
+  .nav-link {
+      color: black !important;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      display: block;
+  }
+
+  /* Ajuste do botão hamburguer */
+  .navbar-toggler {
+      border: none;
+      background: none;
+  }
+
+  /* Botão hamburguer */
+  .navbar-toggler-icon {
+      font-size: 24px;
+  }
+
+  /* Ajuste do menu expandido no mobile */
+  @media (max-width: 991px) {
+      .navbar-collapse {
+          background-color: #f1c40f !important;
+          width: 100%;
+          text-align: center;
+          padding: 10px 0;
+          max-height: 300px;
+          overflow-y: auto;
+      }
+
+      .navbar-nav {
+          width: 100%;
+          text-align: center;
+      }
+
+      .navbar-nav .nav-item {
+          margin-bottom: 5px;
+      }
+
+      /* Itens do menu alinhados no centro */
+      .navbar-nav .nav-link {
+          display: block;
+          padding: 10px 0;
+          font-size: 16px;
+      }
+
+      /* Linha abaixo do item ativo */
+      .navbar-nav .nav-link.active::after {
+          content: "";
+          width: 40px;
+          height: 2px;
+          background: black;
+          display: block;
+          margin: 3px auto;
+      }
+  }
+
+  /* Ajuste para o botão "Sair" dentro do menu */
+  .navbar-nav .nav-item .logout-btn {
+      width: 100%;
+      text-align: center;
+      display: block;
+      color: black !important;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+  }
+
+  /* Adiciona efeito hover no botão */
+  .navbar-nav .nav-item .logout-btn:hover {
+      text-decoration: underline;
+  }
+
+</style>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">GS - VOUCHER</a>
+
+    <!-- Botão Hamburguer -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+      <span class="navbar-toggler-icon">☰</span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <!-- Link Home -->
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'home' %}">Home</a>
+        </li>
+        {% if perms.posto.add_posto %}
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'historico_list' %}">Historico</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'voucher_dashboard' %}">DashBoard</a>
+        </li>
+        {% endif %}
+
+        <!-- Dropdown Postos -->
+         {% if perms.posto.add_posto %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="postoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-fuel-pump"></i> Postos
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="postoDropdown">
+            <li><a class="dropdown-item" href="{% url 'posto_create' %}">Criar Postos</a></li>
+            <li><a class="dropdown-item" href="{% url 'posto_list' %}">Lista de Postos</a></li>
+          </ul>
+        </li>
+        {% endif %}
+
+        <!-- Dropdown Rotas -->
+        {% if perms.rota.add_rota %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="rotaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-map"></i> Rotas
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="rotaDropdown">
+            <li><a class="dropdown-item" href="{% url 'rota_create' %}">Criar Rotas</a></li>
+            <li><a class="dropdown-item" href="{% url 'rota_list' %}">Lista de Rotas</a></li>
+          </ul>
+        </li>
+        {% endif %}
+   
+
+        <!-- Dropdown Vouchers -->
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="voucherDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-ticket-perforated"></i> Vouchers
+          </a>
+          
+          <ul class="dropdown-menu" aria-labelledby="voucherDropdown">
+            {% if perms.vouchers.add_voucher %}
+            <li><a class="dropdown-item" href="{% url 'voucher_create' %}">Criar Vouchers</a></li>
+            {% endif %}
+            {% if perms.vouchers.view_voucher %}
+            <li><a class="dropdown-item" href="{% url 'voucher' %}">Lista de Vouchers</a></li>
+            {% endif %}
+          </ul>
+        </li>
+
+        <!-- Dropdown Gerentes -->
+         {% if perms.gerentes_gerente %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="gerenteDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-badge"></i> Gerentes
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="gerenteDropdown">
+            <li><a class="dropdown-item" href="{% url 'gerente_create' %}">Criar Gerente</a></li>
+            <li><a class="dropdown-item" href="{% url 'gerente_list' %}">Lista de Gerentes</a></li>
+          </ul>
+        </li>
+        {% endif %}
+          {% if perms.usuarios.add_UserProfile %}
+        <!-- Dropdown Usuários -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-people"></i> Usuarios
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="{% url 'user_create' %}">Cadastrar PA</a></li>
+            <li><a class="dropdown-item" href="{% url 'user_list' %}">Lista de PA</a></li>
+          </ul>
+        </li>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="logout-btn">Sair</button>
+          </form>
+      </li>          
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

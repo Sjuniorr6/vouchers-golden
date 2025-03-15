@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Lista de Vouchers{% endblock %}
+
+{% block content %}
+{% include "components/_navbar.html" %}
+
+<style>
+/* Ajuste do container */
+.container {
+    max-width: 1200px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilização do título */
+.titulo {
+    font-size: 28px;
+    color: #222;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.titulo::after {
+    content: "";
+    width: 100px;
+    height: 4px;
+    background: #FFD700;
+    display: block;
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+
+/* Responsividade da tabela */
+.table-responsive {
+    border-radius: 12px;
+    overflow-x: auto; /* Permite rolagem horizontal no celular */
+    display: block;
+    white-space: nowrap; /* Evita que as colunas quebrem linhas */
+}
+
+/* Estilização da tabela */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.table thead {
+    background: #007bff;
+    color: white;
+}
+
+.table th, .table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: #f8f9fa;
+    transition: 0.3s;
+}
+
+/* Estilização do QR Code */
+.qr-code img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* Estilização do botão Excluir */
+.btn-danger {
+    background: linear-gradient(45deg, #dc3545, #a71d2a);
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #a71d2a, #750e1b);
+    transform: scale(1.05);
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .titulo {
+        font-size: 22px;
+    }
+
+    .table {
+        font-size: 14px;
+    }
+
+    .table th, .table td {
+        padding: 8px;
+    }
+
+    .qr-code img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-danger {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+</style>
+
+<div class="container">
+  <h2 class="titulo">Lista de Vouchers</h2>
+  {% if vouchers %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Motorista</th>
+            <th>Placa</th>
+            <th>Embarcador</th>
+            <th>Rota</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th>Telefone</th>
+            <th>Data</th>
+            <th>QR Code</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in vouchers %}
+            {% if perms.rota.delete_rota or v.status == "Ativo" %}
+              <tr data-bs-toggle="modal" data-bs-target="#voucherModal{{ v.pk }}" style="cursor: pointer;">
+                <td>{{ v.pk }}</td>
+                <td>{{ v.motorista }}</td>
+                <td>{{ v.placa }}</td>
+                <td>{{ v.embarcador }}</td>
+                <td>{{ v.rota }}</td>
+                <td>R$ {{ v.valor }}</td>
+                <td>{{ v.data | date:'d/M/Y' }}</td>
+
+                <td>{{ v.status }}</td>
+                <td>
+                  {{ v.telefone }}
+                  {% if v.telefone %}
+                    <a href="https://wa.me/{{ v.telefone|default:'' }}" target="_blank" class="ms-2">
+                      <img src="{% static 'images/vouchers/whatsapp.png' %}" alt="WhatsApp" width="25">
+                    </a>
+                  {% endif %}
+                </td>
+                <td class="qr-code">
+                  {% if v.qrcode_image %}
+                    <img src="{{ v.qrcode_image.url }}" alt="QR Code">
+                  {% else %}
+                    <em>Sem QR</em>
+                  {% endif %}
+                </td>
+                <td onclick="event.stopPropagation();">
+                  {% if perms.rota.change_rota %}
+                    <form method="POST" action="{% url 'voucher_delete' v.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                      <a href="{% url 'voucher_update' v.pk %}" class="btn btn-info btn-sm">Editar</a>
+                    </form>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-center">Nenhum voucher encontrado.</p>
+  {% endif %}
+</div>
+
+<!-- Modais para cada voucher -->
+{% for v in vouchers %}
+  {% if perms.rota.delete_rota or v.status == "Ativo" %}
+    <div class="modal fade" id="voucherModal{{ v.pk }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Detalhes do Voucher #{{ v.pk }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            {% if v.qrcode_image %}
+              <img src="{{ v.qrcode_image.url }}" alt="QR Code" width="250" class="mt-2">
+              <p>R$ {{ v.valor }}</p>
+            {% else %}
+              <p class="text-muted">Nenhum QR Code disponível.</p>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
+
+{% endblock %}

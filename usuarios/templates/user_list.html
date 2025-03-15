@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Usuários{% endblock %}
+
+{% block content %}
+{% include "components/_navbar.html" %}
+
+<style>
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilização do título */
+.titulo-usuarios {
+    font-size: 28px;
+    color: #222;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.titulo-usuarios::after {
+    content: "";
+    width: 100px;
+    height: 4px;
+    background: #FFD700;
+    display: block;
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+
+/* Botão aprimorado */
+.btn-success {
+    display: block;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: bold;
+    font-size: 14px;
+    background: linear-gradient(45deg, #28a745, #218838);
+    border: none;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+    width: 200px; 
+}
+
+.btn-success:hover {
+    background: linear-gradient(45deg, #218838, #1e7e34);
+    transform: scale(1.05);
+}
+
+/* Estilização da tabela */
+.table-container {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.table thead {
+    background: #007bff;
+    color: white;
+}
+
+.table th, .table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: #f8f9fa;
+    transition: 0.3s;
+}
+
+/* Botão Alterar Senha */
+.btn-warning {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: white;
+    background: linear-gradient(45deg, #ffc107, #d39e00);
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(45deg, #d39e00, #b38600);
+    transform: scale(1.05);
+}
+
+/* Ajuste para telas menores */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .btn-success {
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn-warning {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}
+</style>
+
+<div class="container">
+  <h2 class="titulo-usuarios">Lista de PA</h2>
+  
+  <a href="{% url 'user_create' %}" class="btn btn-success">Novo PA</a>
+
+  {% if profiles %}
+    <div class="table-container">
+      <table class="table table-bordered table-striped table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Usuário</th>
+            <th>Rotas</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for profile in profiles %}
+          <tr>
+            <td>{{ profile.user.username }}</td>
+            <td>
+              {% for rota in profile.rotas.all %}
+                {{ rota.nome }}<br>
+              {% endfor %}
+            </td>
+            <td>
+              <a href="{% url 'user_change_password' profile.user.pk %}" class="btn btn-warning btn-sm">
+                Alterar Senha
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-center">Nenhum usuário encontrado.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

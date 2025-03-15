@@ -1,0 +1,40 @@
+<footer class="footer">
+    <p>By Sidnei Junior & Alice Oliveira</p>
+</footer>
+<Style>
+/* Garante que a página ocupa toda a altura da tela */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Wrapper principal que empurra o footer para o final */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* O layout ocupa toda a tela */
+}
+
+/* Faz o conteúdo crescer para empurrar o footer */
+.content {
+    flex-grow: 1;
+}
+
+/* Footer SEMPRE no final */
+.footer {
+    width: 100%;
+    background: linear-gradient(135deg, #ddb607d2, #e0bc52);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12px;
+    margin-top: auto; /* ISSO FAZ ELE IR PRO FINAL! */
+    position: relative;
+}
+
+
+</Style>
+

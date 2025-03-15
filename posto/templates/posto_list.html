@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Lista de Postos{% endblock %}
+
+{% block content %}
+<style>
+  /* Ajuste geral do container */
+  .container {
+      width: 80%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+  }
+
+  /* Título principal */
+  .titulo-postos {
+      font-size: 30px;
+      color: #222;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      position: relative;
+  }
+
+  /* Linha decorativa abaixo do título */
+  .titulo-postos::after {
+      content: "";
+      width: 80px;
+      height: 4px;
+      background: #FFD700;
+      display: block;
+      margin: 8px auto 0;
+      border-radius: 2px;
+  }
+
+  /* Botão aprimorado */
+  .btn-primary {
+      display: block;
+      width: max-content;
+      margin: 20px auto;
+      border-radius: 25px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 16px;
+      background: linear-gradient(45deg, #007bff, #0056b3);
+      border: none;
+      transition: all 0.3s ease-in-out;
+  }
+
+  /* Efeito hover no botão */
+  .btn-primary:hover {
+      background: linear-gradient(45deg, #0056b3, #003d7a);
+      transform: scale(1.05);
+  }
+
+  /* Estilo dos cards */
+  .card {
+      border-radius: 10px;
+      box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: none;
+  }
+
+  /* Efeito de hover nos cards */
+  .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Título do card */
+  .card-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+  }
+
+  /* Texto dentro do card */
+  .card-text {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.6;
+  }
+
+  /* Ícones dentro do texto */
+  .card-text strong i {
+      color: #FFD700;
+      margin-right: 5px;
+  }
+</style>
+
+{% include "components/_navbar.html" %}
+
+<div class="container mt-4">
+  <h2 class="titulo-postos">Postos Adicionados</h2>
+  <a href="{% url 'posto_create' %}" class="btn btn-primary botao-novo">Novo Posto</a>
+
+  {% if postos %}
+    <!-- Exibe cada posto em formato de card, 2 colunas por linha em telas md+ -->
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      {% for posto in postos %}
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{ posto.nome }}</h5>
+              <p class="card-text">
+                <strong><i class="fas fa-city"></i> Cidade:</strong> {{ posto.cidade }}<br>
+                <strong><i class="fas fa-map-marker-alt"></i> Estado:</strong> {{ posto.estado }}<br>
+                <strong><i class="fas fa-road"></i> Endereço:</strong> {{ posto.endereco }}<br>
+                <strong><i class="fas fa-user-tie"></i> Gerente:</strong> {{ posto.gerente }}
+              </p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Nenhum posto cadastrado.</p>
+  {% endif %}
+</div>
+{% endblock %}

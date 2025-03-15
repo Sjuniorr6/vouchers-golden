@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    padding-top: 60px; /* Espaço abaixo da navbar para evitar sobreposição */
+  }
+
+  /* Estilização adicional para as seções */
+  .welcome-section {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  .features-section {
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  .features-section .feature {
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-section {
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: #e9ecef;
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+
+  .cta-section h3 {
+    margin-bottom: 1rem;
+  }
+
+  .cta-section a.btn {
+    margin-top: 1rem;
+  }
+</style>
+
+{% include "components/_navbar.html" %}
+<BR>
+<div class="container mt-4">
+  <!-- Seção de boas-vindas -->
+  <div class="welcome-section">
+    <h2 class="mb-3">Bem-vindo à Página Inicial</h2>
+    <p>
+      Este sistema gera relatórios interativos e dashboards responsivos para melhor 
+      acompanhamento do andamento das operações. Aqui, você terá acesso a informações 
+      importantes sobre vouchers, motoristas, embarcadores e muito mais, de forma 
+      clara e organizada.
+    </p>
+    <p>
+      A plataforma foi desenvolvida para agilizar processos, fornecer transparência 
+      nos dados e otimizar a tomada de decisões. Com uma interface amigável e 
+      funcionalidades intuitivas, você poderá filtrar informações por período, 
+      exportar relatórios em diferentes formatos e visualizar gráficos dinâmicos 
+      que ilustram a performance e o status das operações.
+    </p>
+  </div>
+
+  <!-- Seção de recursos do sistema -->
+  <div class="features-section">
+    <h4 class="mb-3">Principais Recursos</h4>
+
+    <div class="feature">
+      <h5>1. Relatórios Interativos</h5>
+      <p>
+        Gere relatórios detalhados com apenas alguns cliques. Escolha as datas, 
+        aplique filtros e visualize as informações que realmente importam para 
+        o seu negócio.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h5>2. Dashboards Responsivos</h5>
+      <p>
+        Tenha acesso a painéis completos, com gráficos e estatísticas em tempo real. 
+        Acompanhe o status dos vouchers, embarcadores e rotas de maneira intuitiva, 
+        em qualquer dispositivo.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h5>3. Exportação de Arquivos</h5>
+      <p>
+        Exporte seus dados em Excel ou PDF para compartilhar com a equipe ou 
+        arquivar em seus registros. Os relatórios são formatados para facilitar 
+        a leitura e análise posterior.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h5>4. Filtros Avançados</h5>
+      <p>
+        Personalize a exibição dos dados de acordo com suas necessidades. 
+        Filtre por datas, status, embarcadores e muito mais, garantindo 
+        que você sempre veja informações relevantes.
+      </p>
+    </div>
+
+    <div class="feature">
+      <h5>5. Segurança e Confiabilidade</h5>
+      <p>
+        Todos os dados são armazenados em um ambiente seguro, com backup regular 
+        e proteção contra acessos não autorizados. Sua tranquilidade e privacidade 
+        são prioridades.
+      </p>
+    </div>
+  </div>
+
+  <!-- Seção de chamada para ação -->
+ 
+{% endblock %}
