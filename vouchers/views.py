@@ -65,11 +65,12 @@ from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 from .forms import VoucherUpdateForm
 
-class VoucherUpdateView(LoginRequiredMixin,UpdateView):
+class VoucherUpdateView(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
     model = voucher
     form_class = VoucherUpdateForm  # Usa o form COM gasto
     template_name = 'voucher_update.html'
     success_url = reverse_lazy('voucher')
+    permission_required = 'vouchers.change_voucher'
     
     
 from django.shortcuts import get_object_or_404, redirect
