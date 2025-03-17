@@ -60,6 +60,32 @@ class voucher(models.Model):
             self.valor = novo_valor
 
     def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-        # (QR code logic permanece igual)
+        """
+        1) Valida e salva inicialmente para ter self.pk
+        2) Gera o QR code caso seja um novo objeto ou não tenha qrcode_image
+        3) Salva novamente só atualizando o campo qrcode_image
+        """
+        criando = self.pk is None  # Verifica se é criação de um novo voucher
+        self.full_clean()          # Executa as validações do clean()
+        
+        super().save(*args, **kwargs)  # Salva para garantir self.pk
+
+        # Gera o QR Code se for um novo voucher ou se ainda não tiver qrcode_image
+        if criando or not self.qrcode_image:
+            domain = "http://10.0.0.227:8000"  # Ajuste conforme seu ambiente
+            edit_url = f"{domain}/vouchers/editar/{self.pk}/"
+
+            qr = qrcode.QRCode(version=1, box_size=10, border=4)
+            qr.add_data(edit_url)
+            qr.make(fit=True)
+
+            img = qr.make_image(fill_color="black", back_color="white")
+            img_io = BytesIO()
+            img.save(img_io, 'PNG')
+            img_io.seek(0)
+
+            filename = f"qr_{uuid.uuid4().hex}.png"
+            self.qrcode_image.save(filename, File(img_io), save=False)
+
+            # Salva novamente somente o campo qrcode_image
+            super().save(update_fields=['qrcode_image'])
