@@ -72,7 +72,7 @@ class voucher(models.Model):
 
         # Gera o QR Code se for um novo voucher ou se ainda não tiver qrcode_image
         if criando or not self.qrcode_image:
-            domain = "http://10.0.0.227:8000"  # Ajuste conforme seu ambiente
+            domain = "http://www.gsvouchers.com.br"  # Ajuste conforme seu ambiente
             edit_url = f"{domain}/vouchers/editar/{self.pk}/"
 
             qr = qrcode.QRCode(version=1, box_size=10, border=4)
