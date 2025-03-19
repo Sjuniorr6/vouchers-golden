@@ -74,7 +74,7 @@
         border-color: #277dff;
     }
     
-    /* Organização dos checkboxes em duas colunas com no máximo 4 itens cada */
+    /* Organização dos checkboxes em duas colunas com no máximo 5 itens cada */
     .checkbox-columns {
         display: flex;
         gap: 20px;
@@ -162,12 +162,12 @@
         {{ form.postos.label_tag }}
         <div class="checkbox-columns">
           <div class="checkbox-column">
-            {% for checkbox in form.postos|slice:":4" %}
+            {% for checkbox in form.postos|slice:":5" %}
               <div class="checkbox-item">{{ checkbox }}</div>
             {% endfor %}
           </div>
           <div class="checkbox-column">
-            {% for checkbox in form.postos|slice:"4:8" %}
+            {% for checkbox in form.postos|slice:"5:10" %}
               <div class="checkbox-item">{{ checkbox }}</div>
             {% endfor %}
           </div>
