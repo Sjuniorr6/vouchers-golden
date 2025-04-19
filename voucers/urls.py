@@ -15,22 +15,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path('',include('login.urls') ),
-    path('vouchers/',include('vouchers.urls') ),
-    path('posto/',include('posto.urls') ),
-    path('rota/',include('rota.urls') ),
-    path('',include('home.urls') ),
-    path('gerentes/',include('gerentes.urls') ),
-    path('usuarios/',include('usuarios.urls') ),
-    path('historico/',include('historico.urls') ),
-    path('dashboard/',include('dashboard.urls') ),
+
+    # API — deve vir antes de qualquer rota genérica
     path('api/', include('api.urls')),
-    
+
+    # Aplicações com prefixos claros
+    path('login/',    include('login.urls')),
+    path('home/',     include('home.urls')),
+    path('vouchers/', include('vouchers.urls')),
+    path('posto/',    include('posto.urls')),
+    path('rota/',     include('rota.urls')),
+    path('gerentes/', include('gerentes.urls')),
+    path('usuarios/', include('usuarios.urls')),
+    path('historico/',include('historico.urls')),
+    path('dashboard/',include('dashboard.urls')),
 ]
+
+# Servir arquivos de mídia em DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
