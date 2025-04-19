@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'chave_fallback_super_insegura')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gsvouchers.com.br','www.gsvouchers.com.br','52.73.62.28','10.0.0.227']
+ALLOWED_HOSTS = ['gsvouchers.com.br','www.gsvouchers.com.br','52.73.62.28','127.0.0.1']
 
 
 
@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'usuarios',
     'dashboard',
     'historico',
+    'rest_framework',
+    'api',
     
    
 ]

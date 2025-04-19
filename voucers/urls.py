@@ -29,7 +29,7 @@ urlpatterns = [
     path('usuarios/',include('usuarios.urls') ),
     path('historico/',include('historico.urls') ),
     path('dashboard/',include('dashboard.urls') ),
-    
+    path('api/', include('api.urls')),
     
 ]
 if settings.DEBUG:
