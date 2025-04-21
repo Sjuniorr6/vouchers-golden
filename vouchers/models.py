@@ -47,7 +47,7 @@ class voucher(models.Model):
 
         if self.pk:
             # Atualização
-            old = Voucher.objects.get(pk=self.pk)
+            old = voucher.objects.get(pk=self.pk)
 
             # Bloqueia mudanças em voucher expirado
             if self.is_expired:
@@ -77,7 +77,7 @@ class voucher(models.Model):
     def save(self, *args, user=None, **kwargs):
         # Registra quem alterou valor ou gasto
         if self.pk and user is not None:
-            old = Voucher.objects.get(pk=self.pk)
+            old = voucher.objects.get(pk=self.pk)
             if (
                 (self.valor != old.valor) or
                 ((self.gasto or Decimal('0')) != (old.gasto or Decimal('0')))
