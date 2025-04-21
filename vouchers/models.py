@@ -41,36 +41,37 @@ class voucher(models.Model):
         return (timezone.now() - self.data) > timedelta(hours=24)
 
     def clean(self):
-        super().clean()
-        # Subtrair apenas a diferença de gasto em cada atualização
-        if self.pk:
-            old_instance = voucher.objects.get(pk=self.pk)
-            old_valor = old_instance.valor
-            old_gasto = old_instance.gasto or Decimal('0')
-            new_gasto = self.gasto or Decimal('0')
+    super().clean()
+    # Subtração incremental de gasto
+    if self.pk:
+        old_instance = voucher.objects.get(pk=self.pk)
+        old_valor = old_instance.valor
+        old_gasto = old_instance.gasto or Decimal('0')
+        new_gasto = self.gasto or Decimal('0')
 
-            # calcula quanto foi adicionado ao gasto
-            delta_gasto = new_gasto - old_gasto
-            novo_valor = old_valor - delta_gasto
+        # não permite diminuir o gasto (que aumentaria o valor)
+        if new_gasto < old_gasto:
+            raise ValidationError("Não é permitido diminuir o gasto existente.")
 
-            # validações
-            if novo_valor < 0:
-                raise ValidationError("O valor não pode ficar negativo após subtrair o gasto.")
-            # não permite aumentar valor
-            if novo_valor > old_valor:
-                raise ValidationError("Não é permitido aumentar o valor do voucher.")
+        # calcula quanto foi adicionado ao gasto
+        delta_gasto = new_gasto - old_gasto
+        novo_valor = old_valor - delta_gasto
 
-            # ajusta o campo valor
-            self.valor = novo_valor
-        else:
-            # criação de novo voucher: valor inicial - gasto
-            new_gasto = self.gasto or Decimal('0')
-            novo_valor = self.valor - new_gasto
-            if novo_valor < 0:
-                raise ValidationError("O valor não pode ficar negativo na criação.")
-            self.valor = novo_valor
+        # valida que não fique negativo
+        if novo_valor < 0:
+            raise ValidationError("O valor não pode ficar negativo após subtrair o gasto.")
 
-    def save(self, *args, user=None, **kwargs):
+        # ajusta o campo valor
+        self.valor = novo_valor
+    else:
+        # criação de novo voucher: valor inicial - gasto
+        new_gasto = self.gasto or Decimal('0')
+        novo_valor = self.valor - new_gasto
+        if novo_valor < 0:
+            raise ValidationError("O valor não pode ficar negativo na criação.")
+        self.valor = novo_valor
+
+def save(self, *args, user=None, **kwargs):(self, *args, user=None, **kwargs):
         """
         1) Se update e valor/gasto mudou, registra o usuário em updated_by
         2) Valida e salva inicialmente para ter self.pk
