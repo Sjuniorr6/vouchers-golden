@@ -45,34 +45,21 @@ class voucher(models.Model):
         super().clean()
         gasto_atual = self.gasto or Decimal('0')
 
-        if self.pk:
-            # Atualização
-            old = voucher.objects.get(pk=self.pk)
+        # não permite gastar mais que o valor base
+        if gasto_atual > self._initial_valor:
+            raise ValidationError("O gasto não pode ser maior que o valor do voucher.")
 
-            # Bloqueia mudanças em voucher expirado
-            if self.is_expired:
-                if gasto_atual != (old.gasto or Decimal('0')):
-                    raise ValidationError(
-                        "Não é permitido alterar gasto de um voucher expirado."
-                    )
-                return
+        # se expirado, bloqueia alterações de gasto
+        if self.pk and self.is_expired:
+            if gasto_atual != self._initial_gasto:
+                raise ValidationError("Não é permitido alterar o gasto de um voucher expirado.")
+            return
 
-            # Gasto não pode exceder o valor anterior
-            if gasto_atual > old.valor:
-                raise ValidationError(
-                    "O gasto não pode ser maior que o valor do voucher."
-                )
+        # calcula valor restante a partir do valor inicial
+        self.valor = self._initial_valor - gasto_atual
 
-            # Subtrai gasto do valor anterior
-            self.valor = old.valor - gasto_atual
-
-        else:
-            # Criação: gasto não pode exceder valor inicial
-            if gasto_atual > self.valor:
-                raise ValidationError(
-                    "O gasto não pode ser maior que o valor do voucher."
-                )
-            self.valor = self.valor - gasto_atual
+        if self.valor < 0:
+            raise ValidationError("O valor não pode ficar negativo após subtrair o gasto.")
 
     def save(self, *args, user=None, **kwargs):
         # Registra quem alterou valor ou gasto
