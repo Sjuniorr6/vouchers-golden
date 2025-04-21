@@ -12,7 +12,7 @@ from decimal import Decimal
 from django.utils import timezone
 
 
-class Voucher(models.Model):
+class voucher(models.Model):
     motorista = models.CharField(max_length=50, null=True, blank=True)
     data = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     placa = models.CharField(max_length=50, null=True, blank=True)
