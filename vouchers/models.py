@@ -11,7 +11,8 @@ from datetime import timedelta
 from decimal import Decimal
 from django.utils import timezone
 
-class voucher(models.Model):
+
+class Voucher(models.Model):
     motorista = models.CharField(max_length=50, null=True, blank=True)
     data = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     placa = models.CharField(max_length=50, null=True, blank=True)
@@ -23,7 +24,7 @@ class voucher(models.Model):
     valor = models.DecimalField(max_digits=6, decimal_places=2, default=Decimal('40.00'))
     qrcode_image = models.ImageField(upload_to='qrcodes', null=True, blank=True)
 
-    # Novo campo para registrar quem alterou valor ou gasto
+    # Campos de auditoria
     updated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -42,54 +43,52 @@ class voucher(models.Model):
 
     def clean(self):
         super().clean()
+        gasto_atual = self.gasto or Decimal('0')
 
         if self.pk:
-            old = voucher.objects.get(pk=self.pk)
-            # Se expirado, bloqueia alteração de valor ou gasto
+            # Atualização
+            old = Voucher.objects.get(pk=self.pk)
+
+            # Bloqueia mudanças em voucher expirado
             if self.is_expired:
-                if self.valor != old.valor or (self.gasto or Decimal('0')) != (old.gasto or Decimal('0')):
-                    raise ValidationError("Não é permitido alterar valor ou gasto de um voucher expirado.")
+                if gasto_atual != (old.gasto or Decimal('0')):
+                    raise ValidationError(
+                        "Não é permitido alterar gasto de um voucher expirado."
+                    )
                 return
 
-            # Validações para voucher não expirado
-            old_valor = old.valor
-            old_gasto = old.gasto or Decimal('0')
-            new_gasto = self.gasto or Decimal('0')
+            # Gasto não pode exceder o valor anterior
+            if gasto_atual > old.valor:
+                raise ValidationError(
+                    "O gasto não pode ser maior que o valor do voucher."
+                )
 
-            # Não permite diminuir o gasto (o que aumentaria o valor)
-            if new_gasto < old_gasto:
-                raise ValidationError("Não é permitido diminuir o gasto existente.")
-
-            # Calcula valor restante
-            gasto_delta = new_gasto - old_gasto
-            novo_valor = old_valor - gasto_delta
-
-            if novo_valor < 0:
-                raise ValidationError("O valor não pode ficar negativo após subtrair o gasto.")
-
-            # Ajusta o campo valor
-            self.valor = novo_valor
+            # Subtrai gasto do valor anterior
+            self.valor = old.valor - gasto_atual
 
         else:
-            # Criação de novo voucher: valor inicial - gasto
-            new_gasto = self.gasto or Decimal('0')
-            novo_valor = self.valor - new_gasto
-            if novo_valor < 0:
-                raise ValidationError("O valor não pode ficar negativo na criação.")
-            self.valor = novo_valor
+            # Criação: gasto não pode exceder valor inicial
+            if gasto_atual > self.valor:
+                raise ValidationError(
+                    "O gasto não pode ser maior que o valor do voucher."
+                )
+            self.valor = self.valor - gasto_atual
 
     def save(self, *args, user=None, **kwargs):
-        # Registra usuário que alterou valor ou gasto
+        # Registra quem alterou valor ou gasto
         if self.pk and user is not None:
-            old = voucher.objects.get(pk=self.pk)
-            if self.valor != old.valor or (self.gasto or Decimal('0')) != (old.gasto or Decimal('0')):
+            old = Voucher.objects.get(pk=self.pk)
+            if (
+                (self.valor != old.valor) or
+                ((self.gasto or Decimal('0')) != (old.gasto or Decimal('0')))
+            ):
                 self.updated_by = user
 
         creating = self.pk is None
         self.full_clean()
         super().save(*args, **kwargs)
 
-        # Gera QR Code para novos vouchers
+        # Gera QR code se for novo voucher
         if creating or not self.qrcode_image:
             domain = "http://www.gsvouchers.com.br"
             edit_url = f"{domain}/vouchers/editar/{self.pk}/"
