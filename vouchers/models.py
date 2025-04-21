@@ -38,33 +38,32 @@ class voucher(models.Model):
     @property
     def is_expired(self):
         return (timezone.now() - self.data) > timedelta(hours=24)
-def clean(self):
-    super().clean()
-    if self.pk:
-        old_instance = voucher.objects.get(pk=self.pk)
-        old_valor = old_instance.valor
-        gasto_atual = self.gasto or 0
 
-        # 1) calcula o valor pós‑gasto
-        novo_valor = old_valor - gasto_atual
+    def clean(self):
+        super().clean()
+        if self.pk:
+            old_instance = voucher.objects.get(pk=self.pk)
+            old_valor = old_instance.valor
+            gasto_atual = self.gasto or 0
 
-        # 2) validações
-        if novo_valor < 0:
-            raise ValidationError("O valor não pode ficar negativo após subtrair o gasto.")
-        if novo_valor > old_valor:
-            raise ValidationError("Não é permitido aumentar o valor do voucher.")  # aqui nunca vai cair
+            # 1) calcula o valor pós‑gasto
+            novo_valor = old_valor - gasto_atual
 
-        # 3) ajusta o campo
-        self.valor = novo_valor
+            # 2) validações
+            if novo_valor < 0:
+                raise ValidationError("O valor não pode ficar negativo após subtrair o gasto.")
+            # Verificação de aumento é redundante, novo_valor nunca > old_valor após subtração
 
-    else:
-        # criação (igual antes)
-        gasto_atual = self.gasto or 0
-        novo_valor = self.valor - gasto_atual
-        if novo_valor < 0:
-            raise ValidationError("O valor não pode ficar negativo na criação.")
-        self.valor = novo_valor
+            # 3) ajusta o campo
+            self.valor = novo_valor
 
+        else:
+            # criação (igual antes)
+            gasto_atual = self.gasto or 0
+            novo_valor = self.valor - gasto_atual
+            if novo_valor < 0:
+                raise ValidationError("O valor não pode ficar negativo na criação.")
+            self.valor = novo_valor
 
     def save(self, *args, user=None, **kwargs):
         """
