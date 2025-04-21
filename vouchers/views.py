@@ -65,12 +65,26 @@ from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 from .forms import VoucherUpdateForm
 
-class VoucherUpdateView(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views.generic import UpdateView
+from .models import voucher  # ou Voucher, conforme seu import
+from .forms import VoucherUpdateForm
+
+class VoucherUpdateView(LoginRequiredMixin,
+                        PermissionRequiredMixin,
+                        UpdateView):
     model = voucher
-    form_class = VoucherUpdateForm  # Usa o form COM gasto
+    form_class = VoucherUpdateForm
     template_name = 'voucher_update.html'
-    success_url = reverse_lazy('voucher')
+    success_url = reverse_lazy('voucher')  # troque para a url name que você realmente quer
     permission_required = 'vouchers.change_voucher'
+
+    def form_valid(self, form):
+        # salvar com user=request.user para popular updated_by
+        self.object = form.save(commit=False)
+        self.object.save(user=self.request.user)
+        return super().form_valid(form)
     
     
 from django.shortcuts import get_object_or_404, redirect
