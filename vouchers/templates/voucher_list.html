@@ -136,8 +136,7 @@ endblock %} {% block content %} {% include "components/_navbar.html" %}
         </tr>
       </thead>
       <tbody>
-        {% for v in vouchers %} {% if perms.rota.delete_rota or v.status ==
-        "Ativo" %}
+        {% for v in vouchers %} {% if perms.rota.delete_rota or v.status == "Ativo" %}
         <tr
           data-bs-toggle="modal"
           data-bs-target="#voucherModal{{ v.pk }}"
